@@ -5,6 +5,8 @@ DEBUG = False
 
 ALLOWED_HOSTS = ["*"]
 
+NYRR_WEBHOOK = os.environ["NYRR_WEBHOOK"]
+
 # Database
 DATABASES = {
     'default': {
