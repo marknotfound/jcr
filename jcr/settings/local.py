@@ -5,7 +5,7 @@ def update_environment():
     with open(BASE_DIR / ".." / ".env") as env_file:
         for line in env_file:
             (key, _, value) = line.partition("=")
-            os.environ.update({key: value})
+            os.environ.update({key: value.replace("\n", "")})
 
 update_environment()
 
