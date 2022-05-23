@@ -4,10 +4,23 @@ NYRR_HOST = "https://www.nyrr.org"
 STATUS_EXCLUDE_LIST = ("Completed", "Partner Race",)
 
 class NYRRScraper(BaseScraper):
-    root_url = f"{NYRR_HOST}/fullraceyearindex?year=2022"
+    root_url = NYRR_HOST
+    paths = (
+        "/fullraceyearindex?year=2022",
+        "/fullraceyearindex?year=2023",
+    )
 
     def scrape_full_dataset(self) -> dict:
-        root = self.fetch_root()
+        races = {}
+
+        for path in self.paths:
+            race_chunk = self.scrape_path(path)
+            races = races | race_chunk
+
+        return races
+
+    def scrape_path(self, path) -> dict:
+        root = self.fetch_root(path)
         races = {}
 
         for row in self.find_all_by_class(root, "index_listing__inner"):

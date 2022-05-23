@@ -6,8 +6,8 @@ from . import exceptions
 class BaseScraper:
     root_url = None
 
-    def fetch_root(self) -> BeautifulSoup:
-        response = requests.get(self.root_url)
+    def fetch_root(self, path="") -> BeautifulSoup:
+        response = requests.get(self.root_url + path)
 
         if not response.ok:
             raise exceptions.FailedScraperException(f"Request to root URL failed: {self.root_url=} {response.status_code=}")

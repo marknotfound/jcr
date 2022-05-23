@@ -62,6 +62,8 @@ class Command(BaseCommand):
             message_generator = getattr(MessageGenerator, f"generate_{scraper_name}_message")
             message = message_generator(new_races, changed_races)
 
+            logger.debug(message)
+
             if message:
                 webhook_url = getattr(settings, f"{scraper_name.upper()}_WEBHOOK")
                 SUPPRESS_EMBEDS = 1 << 2
