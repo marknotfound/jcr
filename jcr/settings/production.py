@@ -1,5 +1,19 @@
 import os
+import re
 from .base import *
+
+def _postgres_url_to_config(database_url):
+    match = re.match(r'postgres://(.+):(.+)@(.+):(.+)/(.+)', database_url)
+    (user, password, host, port, dbname) = match.groups()
+
+    return {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': dbname,
+        'USER': user,
+        'PASSWORD': password,
+        'HOST': host,
+        'PORT': port,
+    }
 
 DEBUG = False
 
@@ -9,14 +23,7 @@ NYRR_WEBHOOK = os.environ["NYRR_WEBHOOK"]
 
 # Database
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.environ["POSTGRES_NAME"],
-        'USER': os.environ["POSTGRES_USERNAME"],
-        'PASSWORD': os.environ["POSTGRES_PASSWORD"],
-        'HOST': os.environ["POSTGRES_HOST"],
-        'PORT': os.environ["POSTGRES_PORT"],
-    }
+    'default': _postgres_url_to_config(os.environ["DATABASE_URL"])
 }
 
 
