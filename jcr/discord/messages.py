@@ -70,7 +70,7 @@ class MessageGenerator:
                 message += f"{emoji} **{race_name}**\n"
                 for key, (previous_value, current_value) in changeset.items():
                     human_key = human_keys.get(key, key.capitalize())
-
+                    human_key=human_key.replace('_',' ').title()
                     if previous_value and not current_value:
                         message += f"{human_key} was removed. Was previously {previous_value}."
                     elif not previous_value  and current_value:
