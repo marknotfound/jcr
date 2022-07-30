@@ -18,6 +18,10 @@ def random_emoji():
     return emoji[randint(0, len(emoji)-1)]
 
 class MessageGenerator:
+    human_keys = {
+        "url": "Registration Link",
+    }
+
     """
     Each method on this class named with the convention of `generate_{name}_message`
     will be called for its corresponding scraper to generate a message to send
@@ -41,16 +45,13 @@ class MessageGenerator:
     """
     @classmethod
     def generate_nyrr_message(cls, new_records: list[ScrapedRace], updates: dict[str, dict[str, tuple]]):
-        human_keys = {
-            "url": "Registration link",
-        }
-
         if not new_records and not updates:
             return None
 
         message = ":rotating_light: NYRR schedule updated :rotating_light:\n\n"
         if new_records:
-            message += "**New Race(s) Added**\n\n"
+            race_or_races = "Races" if len(new_records) > 1 else "Race"
+            message += f"**New {race_or_races} Added**\n\n"
 
             for race in new_records:
                 emoji = random_emoji()
@@ -64,13 +65,14 @@ class MessageGenerator:
                 message += "\n\n"
 
         if updates:
-            message += "**Updated Race(s)**\n\n"
+            race_or_races = "Races" if len(updates.keys()) > 1 else "Race"
+            message += f"**Updated {race_or_races}**\n\n"
             for race_name, changeset in updates.items():
                 emoji = random_emoji()
                 message += f"{emoji} **{race_name}**\n"
                 for key, (previous_value, current_value) in changeset.items():
-                    human_key = human_keys.get(key, key.capitalize())
-                    human_key=human_key.replace('_',' ').title()
+                    human_key = cls.humanize_key(key)
+
                     if previous_value and not current_value:
                         message += f"{human_key} was removed. Was previously {previous_value}."
                     elif not previous_value  and current_value:
@@ -83,3 +85,10 @@ class MessageGenerator:
                 message += "\n\n"
 
         return message
+
+    @classmethod
+    def humanize_key(cls, key):
+        def default_transform(key):
+            return key.replace("_", " ").title()
+
+        return cls.human_keys.get(key, default_transform(key))
