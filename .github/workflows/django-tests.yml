@@ -19,4 +19,4 @@ jobs:
       - name: Run Django test suite
         run: |
           cd ./jcr
-          pipenv run ./manage.py test
+          pipenv run ./manage.py test --settings settings.test
