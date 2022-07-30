@@ -9,9 +9,12 @@ from .scrapers.nyrr import NYRRScraper
 
 class MessageGeneratorTestCase(TestCase):
     def test_humanize_key(self):
-        self.assertEqual(MessageGenerator.humanize_key("start_time"), "Start Time")
-        self.assertEqual(MessageGenerator.humanize_key("start_time_again"), "Start Time Again")
-        self.assertEqual(MessageGenerator.humanize_key("race"), "Race")
+        self.assertEquals(MessageGenerator.humanize_key("start_time"), "Start Time")
+        self.assertEquals(MessageGenerator.humanize_key("start_time_again"), "Start Time Again")
+        self.assertEquals(MessageGenerator.humanize_key("race"), "Race")
+
+        # Test special case overrides
+        self.assertEquals(MessageGenerator.humanize_key("url"), "Registration Link")
 
 class NYRRMessageGeneratorTestCase(TestCase):
     def test_empty_records(self):

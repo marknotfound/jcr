@@ -19,7 +19,7 @@ def random_emoji():
 
 class MessageGenerator:
     human_keys = {
-        "url": "Registration link",
+        "url": "Registration Link",
     }
 
     """
