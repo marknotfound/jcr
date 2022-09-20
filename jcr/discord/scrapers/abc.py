@@ -1,4 +1,5 @@
 import requests
+from requests.models import Response
 from abc import abstractmethod
 from bs4 import BeautifulSoup
 from . import exceptions
@@ -6,13 +7,13 @@ from . import exceptions
 class BaseScraper:
     root_url = None
 
-    def fetch_root(self, path="") -> BeautifulSoup:
-        response = requests.get(self.root_url + path)
+    def fetch_root(self, path="", **request_kwargs) -> tuple[BeautifulSoup, Response]:
+        response = requests.get(self.root_url + path, **request_kwargs)
 
         if not response.ok:
             raise exceptions.FailedScraperException(f"Request to root URL failed: {self.root_url=} {response.status_code=}")
 
-        return BeautifulSoup(response.content, features="html.parser")
+        return BeautifulSoup(response.content, features="html.parser"), response
 
     def find_all_by_class(self, parent_node, class_name):
         return parent_node.find_all(attrs={"class": class_name})
