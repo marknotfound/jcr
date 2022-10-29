@@ -1,5 +1,7 @@
 FROM python:3.10.8-slim-buster
 
+ENV PYTHONUNBUFFERED=1
+
 RUN set +x && \
   pip install pipenv && \
   mkdir /app
