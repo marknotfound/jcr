@@ -1,0 +1,1 @@
+0 * * * * python /app/jcr/manage.py scrape_races >> /app/var/log/cron.log 2>&1
