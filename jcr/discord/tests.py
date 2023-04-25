@@ -1,5 +1,8 @@
 from unittest.mock import MagicMock, patch
+from http import HTTPStatus
 from django.test import TestCase
+from django.urls import reverse
+from rest_framework.test import APIClient
 
 from requests.models import Response
 
@@ -19,7 +22,7 @@ class MessageGeneratorTestCase(TestCase):
 class NYRRMessageGeneratorTestCase(TestCase):
     def test_empty_records(self):
         result = MessageGenerator.generate_nyrr_message([], {})
-        self.assertIsNone(result)
+        self.assertFalse(result)
 
     def test_single_new_record_with_url(self):
         race = ScrapedRace.objects.create(
@@ -128,3 +131,14 @@ class NYRRScraperTestCase(TestCase):
             self.assertIn("start_time", race_body)
             self.assertIn("location", race_body)
             self.assertIn("status", race_body)
+
+class VolunteerOpportunityWebhookTestCase(TestCase):
+    def test_post(self):
+        client = APIClient()
+        request_body = {
+            "npo_eligible": 7,
+        }
+        response = client.post(reverse('volunteer-opportunities-list'), request_body, format='json')
+        body = response.json()
+        self.assertEqual(response.status_code, HTTPStatus.CREATED)
+        self.assertEqual(body['npo_eligible'], request_body['npo_eligible'])
