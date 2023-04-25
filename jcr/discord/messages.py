@@ -44,9 +44,9 @@ class MessageGenerator:
         }
     """
     @classmethod
-    def generate_nyrr_message(cls, new_records: list[ScrapedRace], updates: dict[str, dict[str, tuple]]):
+    def generate_nyrr_message(cls, new_records: list[ScrapedRace], updates: dict[str, dict[str, tuple]]) -> str:
         if not new_records and not updates:
-            return None
+            return ""
 
         message = ":rotating_light: NYRR schedule updated :rotating_light:\n\n"
         if new_records:
