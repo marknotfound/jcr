@@ -1,7 +1,12 @@
-from rest_framework import viewsets
-from .models import VolunteerOpportunitySummary
-from .serializers import VolunteerOpportunitySerializer
+from http import HTTPStatus
+from rest_framework import viewsets, response
+from . import serializers
 
-class VolunteerOpportunitySummaryViewSet(viewsets.ModelViewSet):
-    queryset = VolunteerOpportunitySummary.objects.all()
-    serializer_class = VolunteerOpportunitySerializer
+
+class VolunteerOpportunityWebhook(viewsets.ViewSet):
+    def create(self, request):
+        serializer = serializers.VolunteerOpportunityWebhookPayload(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+
+        return response.Response(None, status=HTTPStatus.NO_CONTENT)
