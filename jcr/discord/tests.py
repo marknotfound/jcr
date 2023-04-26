@@ -7,7 +7,7 @@ from rest_framework.test import APIClient
 from requests.models import Response
 
 from .messages import MessageGenerator
-from .models import ScrapedRace
+from .models import ScrapedRace, VolunteerOpportunity
 from .scrapers.nyrr import NYRRScraper
 
 class MessageGeneratorTestCase(TestCase):
@@ -125,7 +125,7 @@ class NYRRScraperTestCase(TestCase):
         for race_title, race_body in races.items():
             self.assertIsInstance(race_title, str)
             self.assertIn("title", race_body)
-            self.assertEquals(race_body["title"], race_title)
+            self.assertEqual(race_body["title"], race_title)
             self.assertIn("url", race_body)
             self.assertIn("start_date", race_body)
             self.assertIn("start_time", race_body)
@@ -133,12 +133,45 @@ class NYRRScraperTestCase(TestCase):
             self.assertIn("status", race_body)
 
 class VolunteerOpportunityWebhookTestCase(TestCase):
-    def test_post(self):
+    def test_webhook_happy(self):
         client = APIClient()
+        Parsed = [
+            {
+                "date": "2019-01-01",
+                "time": "10:00",
+                "location": "Central Park",
+                "title": "Bag Check",
+                "event": "Achilles 4M",
+                "desc": "Lorem ipsum",
+                "tags":["thing", "thing2"],
+                "html": "<p>HTML</p>"
+            },
+            {
+                "date": "2019-01-02",
+                "time": "11:00",
+                "location": "Prospect Park",
+                "title": "Finish Line",
+                "event": "Some Other Race 10M",
+                "desc": "Battle hill makes me sad",
+                "tags":["thing", "thing2"],
+                "html": "<p>HTML</p>"
+            }
+        ]
+
         request_body = {
-            "npo_eligible": 7,
+            "eligibles": [
+                { "Parsed": p } for p in Parsed
+            ],
         }
+
         response = client.post(reverse('volunteer-opportunities-list'), request_body, format='json')
-        body = response.json()
-        self.assertEqual(response.status_code, HTTPStatus.CREATED)
-        self.assertEqual(body['npo_eligible'], request_body['npo_eligible'])
+        self.assertEqual(response.status_code, HTTPStatus.NO_CONTENT)
+
+        for p in Parsed:
+            opp = VolunteerOpportunity.objects.get(start_date=p["date"])
+            self.assertEqual(opp.start_date, p["date"])
+            self.assertEqual(opp.start_time, p["time"])
+            self.assertEqual(opp.location, p["location"])
+            self.assertEqual(opp.title, p["title"])
+            self.assertEqual(opp.description, p["desc"])
+            self.assertEqual(opp.event, p["event"])
