@@ -1,6 +1,6 @@
 from http import HTTPStatus
-from rest_framework import viewsets, response
-from . import serializers
+from rest_framework import viewsets, response, mixins
+from . import serializers, models
 
 
 class VolunteerOpportunityWebhook(viewsets.ViewSet):
@@ -10,3 +10,7 @@ class VolunteerOpportunityWebhook(viewsets.ViewSet):
         serializer.save()
 
         return response.Response(None, status=HTTPStatus.NO_CONTENT)
+
+class VolunteerOpportunities(viewsets.GenericViewSet, mixins.ListModelMixin):
+    serializer_class = serializers.VolunteerOpportunity
+    queryset = models.VolunteerOpportunity.objects.all()

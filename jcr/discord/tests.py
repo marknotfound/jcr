@@ -164,7 +164,7 @@ class VolunteerOpportunityWebhookTestCase(TestCase):
             ],
         }
 
-        response = client.post(reverse('volunteer-opportunities-list'), request_body, format='json')
+        response = client.post(reverse('volunteer-opportunities-webhook-list'), request_body, format='json')
         self.assertEqual(response.status_code, HTTPStatus.NO_CONTENT)
 
         for p in Parsed:
@@ -175,3 +175,8 @@ class VolunteerOpportunityWebhookTestCase(TestCase):
             self.assertEqual(opp.title, p["title"])
             self.assertEqual(opp.description, p["desc"])
             self.assertEqual(opp.event, p["event"])
+
+        response = client.get(reverse('volunteer-opportunities-list'))
+        self.assertEqual(response.status_code, HTTPStatus.OK)
+        body = response.json()
+        self.assertEqual(len(body), 2)

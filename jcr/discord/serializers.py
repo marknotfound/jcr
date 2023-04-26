@@ -1,8 +1,12 @@
 from rest_framework import serializers
 from . import models
 
+class VolunteerOpportunity(serializers.ModelSerializer):
+    class Meta:
+        model = models.VolunteerOpportunity
+        fields = "__all__"
 
-class VolunteerOpportunity(serializers.Serializer):
+class VolunteerOpportunityPayload(serializers.Serializer):
     date = serializers.CharField(required=True)
     time = serializers.CharField(required=True)
     location = serializers.CharField(required=True)
@@ -22,14 +26,14 @@ class VolunteerOpportunity(serializers.Serializer):
         return opp
 
 class VolunteerOpportunityWebhookEvent(serializers.Serializer):
-    Parsed = VolunteerOpportunity(required=False)
+    Parsed = VolunteerOpportunityPayload(required=False)
     Err = serializers.CharField(required=False)
     Text = serializers.CharField(required=False)
 
     def create(self, validated_data):
         parsed = validated_data.get("Parsed")
         if parsed:
-            serializer = VolunteerOpportunity(data=parsed)
+            serializer = VolunteerOpportunityPayload(data=parsed)
             serializer.is_valid(raise_exception=True)
             return serializer.save()
 
