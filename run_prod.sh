@@ -2,6 +2,7 @@
 
 set -e
 mkdir -p /app/var/log
+env >> /etc/environment
 crontab /app/etc/crontab
 cron
 
