@@ -12,11 +12,11 @@ class VolunteerOpportunityWebhook(viewsets.ViewSet):
         serializer.is_valid(raise_exception=True)
         instances = serializer.save()
 
-        message = MessageGenerator.generate_volunteer_opportunities_message(instances)
+        # message = MessageGenerator.generate_volunteer_opportunities_message(instances)
 
-        if message:
-            SUPRESS_EMBEDS = 1 << 2
-            requests.post(settings.NYRR_WEBHOOK, { "content": message, "flags": SUPRESS_EMBEDS })
+        # if message:
+        #     SUPRESS_EMBEDS = 1 << 2
+        #     requests.post(settings.NYRR_WEBHOOK, { "content": message, "flags": SUPRESS_EMBEDS })
 
         return response.Response(None, status=HTTPStatus.NO_CONTENT)
 
