@@ -164,7 +164,10 @@ class VolunteerOpportunityWebhookTestCase(TestCase):
             ],
         }
 
-        response = client.post(reverse('volunteer-opportunities-webhook-list'), request_body, format='json')
+        with patch("requests.post") as requests_post:
+            response = client.post(reverse('volunteer-opportunities-webhook-list'), request_body, format='json')
+            requests_post.assert_called_once()
+
         self.assertEqual(response.status_code, HTTPStatus.NO_CONTENT)
 
         for p in Parsed:
