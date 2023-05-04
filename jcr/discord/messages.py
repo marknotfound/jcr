@@ -1,5 +1,5 @@
 from random import randint
-from .models import ScrapedRace
+from .models import ScrapedRace, VolunteerOpportunity
 
 def random_emoji():
     emoji = [
@@ -84,6 +84,21 @@ class MessageGenerator:
 
                 message += "\n\n"
 
+        return message
+
+    @classmethod
+    def generate_volunteer_opportunities_message(cls, opportunities: list[VolunteerOpportunity]) -> str:
+        if not opportunities:
+            return ""
+
+        message = ":rotating_light: New 9+1 volunteer opportunities :rotating_light:\n\n"
+
+        for opportunity in opportunities:
+            emoji = random_emoji()
+            message += f"{emoji} **{opportunity.title}**\n{opportunity.start_date} @ {opportunity.start_time} - {opportunity.location}\n{opportunity.description}\n\n"
+
+        signup_url = "https://www.nyrr.org/getinvolved/volunteer/opportunities?available_only=true&limit=8&offset=0&opportunity_type=9%2B1%20Qualifier&totalItemLoaded=8"
+        message += f"View Opportunities: {signup_url}"
         return message
 
     @classmethod
