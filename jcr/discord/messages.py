@@ -91,7 +91,7 @@ class MessageGenerator:
         if not opportunities:
             return ""
 
-        message = ":rotating_light: New 9+1 volunteer opportunities :rotating_light:\n\n"
+        message = ":rotating_light: New 9+1 Volunteer Opportunities :rotating_light:\n\n"
 
         for opportunity in opportunities:
             emoji = random_emoji()
