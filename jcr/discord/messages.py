@@ -95,7 +95,7 @@ class MessageGenerator:
 
         for opportunity in opportunities:
             emoji = random_emoji()
-            message += f"{emoji} **{opportunity.title}**\n{opportunity.start_date} @ {opportunity.start_time} - {opportunity.location}\n{opportunity.description}\n\n"
+            message += f"{emoji} **{opportunity.event} - {opportunity.title}**\n{opportunity.start_date} @ {opportunity.start_time} - {opportunity.location}\n{opportunity.description}\n\n"
 
         signup_url = "https://www.nyrr.org/getinvolved/volunteer/opportunities?available_only=true&limit=8&offset=0&opportunity_type=9%2B1%20Qualifier&totalItemLoaded=8"
         message += f"View Opportunities: {signup_url}"
