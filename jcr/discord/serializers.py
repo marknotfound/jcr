@@ -15,15 +15,17 @@ class VolunteerOpportunityPayload(serializers.Serializer):
     event = serializers.CharField(required=True)
 
     def create(self, validated_data):
-        opp = models.VolunteerOpportunity.objects.create(
-            start_date=validated_data["date"],
-            start_time=validated_data["time"],
-            location=validated_data["location"],
-            title=validated_data["title"],
-            description=validated_data["desc"],
+        opp, created = models.VolunteerOpportunity.objects.update_or_create(
             event=validated_data["event"],
+            title=validated_data["title"],
+            defaults={
+                "start_date": validated_data["date"],
+                "start_time": validated_data["time"],
+                "location": validated_data["location"],
+                "description": validated_data["desc"],
+            },
         )
-        return opp
+        return opp, created
 
 class VolunteerOpportunityWebhookEvent(serializers.Serializer):
     Parsed = VolunteerOpportunityPayload(required=False)
@@ -32,12 +34,13 @@ class VolunteerOpportunityWebhookEvent(serializers.Serializer):
 
     def create(self, validated_data):
         parsed = validated_data.get("Parsed")
+        opp = created = None
         if parsed:
             serializer = VolunteerOpportunityPayload(data=parsed)
             serializer.is_valid(raise_exception=True)
-            return serializer.save()
+            opp, created = serializer.save()
 
-        return True # Fail silently if no volunteer opps
+        return opp if created else True # Fail silently if no volunteer opps
 
 class VolunteerOpportunityWebhookPayload(serializers.Serializer):
     eligibles = VolunteerOpportunityWebhookEvent(many=True, required=False)
