@@ -2,7 +2,6 @@ from unittest.mock import MagicMock, patch
 from http import HTTPStatus
 from django.test import TestCase
 from django.urls import reverse
-from django.core.management import call_command
 from rest_framework.test import APIClient
 
 from requests.models import Response
@@ -185,7 +184,7 @@ class VolunteerOpportunityWebhookTestCase(TestCase):
         body = response.json()
         self.assertEqual(len(body), 2)
 
-class PruneVolunteerOpportunitiesTestCase(TestCase):
+class VolunteerOpportunityManagerTestCase(TestCase):
     def test_prune(self):
         from datetime import timedelta
         from django.utils import timezone
@@ -197,7 +196,7 @@ class PruneVolunteerOpportunitiesTestCase(TestCase):
         newer_opp.created = timezone.now() - timedelta(hours=23)
         newer_opp.save()
 
-        call_command('prune_volunteer_opportunities')
+        VolunteerOpportunity.objects.prune()
 
         with self.assertRaises(VolunteerOpportunity.DoesNotExist):
             opp.refresh_from_db()
