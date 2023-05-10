@@ -2,12 +2,14 @@ from http import HTTPStatus
 import requests
 from rest_framework import viewsets, response, mixins
 from django.conf import settings
-from . import serializers, models
+from . import serializers
+from .models import VolunteerOpportunity
 from .messages import MessageGenerator
 
 
 class VolunteerOpportunityWebhook(viewsets.ViewSet):
     def create(self, request):
+        VolunteerOpportunity.objects.prune()
         serializer = serializers.VolunteerOpportunityWebhookPayload(data=request.data)
         serializer.is_valid(raise_exception=True)
         instances = serializer.save()
@@ -22,4 +24,4 @@ class VolunteerOpportunityWebhook(viewsets.ViewSet):
 
 class VolunteerOpportunities(viewsets.GenericViewSet, mixins.ListModelMixin):
     serializer_class = serializers.VolunteerOpportunity
-    queryset = models.VolunteerOpportunity.objects.all()
+    queryset = VolunteerOpportunity.objects.all()
