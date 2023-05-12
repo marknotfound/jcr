@@ -1,3 +1,4 @@
+import re
 from rest_framework import serializers
 from . import models
 
@@ -38,7 +39,10 @@ class VolunteerOpportunityWebhookEvent(serializers.Serializer):
         if parsed:
             serializer = VolunteerOpportunityPayload(data=parsed)
             serializer.is_valid(raise_exception=True)
-            opp, created = serializer.save()
+            description = serializer.validated_data["desc"]
+            not_plus_one = "not\s?+a?\s?+9?\+1"
+            if not re.search(not_plus_one, description):
+                opp, created = serializer.save()
 
         return opp if created else True # Fail silently if no volunteer opps
 
@@ -52,6 +56,6 @@ class VolunteerOpportunityWebhookPayload(serializers.Serializer):
         if eligibles:
             serializer = VolunteerOpportunityWebhookEvent(data=eligibles, many=True)
             serializer.is_valid(raise_exception=True)
-            return serializer.save()
+            return [i for i in serializer.save() if isinstance(i, models.VolunteerOpportunity)]
 
         return []

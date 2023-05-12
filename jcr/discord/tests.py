@@ -155,6 +155,28 @@ class VolunteerOpportunityWebhookTestCase(TestCase):
                 "desc": "Battle hill makes me sad",
                 "tags":["thing", "thing2"],
                 "html": "<p>HTML</p>"
+            },
+            # The below two opps should not be created because the
+            # descriptions say they're not +1 eligible.
+            {
+                "date": "2019-01-02",
+                "time": "11:00",
+                "location": "Prospect Park",
+                "title": "Starting Line",
+                "event": "Some Other Race 10M",
+                "desc": "This is not a +1 opportunity because NYRR likes to mess with me",
+                "tags":["thing", "thing2"],
+                "html": "<p>HTML</p>"
+            },
+            {
+                "date": "2019-01-02",
+                "time": "11:00",
+                "location": "Prospect Park",
+                "title": "Fluid Stations",
+                "event": "Some Other Race 10M",
+                "desc": "This is not +1 eligible because NYRR likes to mess with me",
+                "tags":["thing", "thing2"],
+                "html": "<p>HTML</p>"
             }
         ]
 
@@ -169,9 +191,10 @@ class VolunteerOpportunityWebhookTestCase(TestCase):
             requests_post.assert_called_once()
 
         self.assertEqual(response.status_code, HTTPStatus.NO_CONTENT)
+        self.assertEqual(VolunteerOpportunity.objects.count(), 2)
 
-        for p in Parsed:
-            opp = VolunteerOpportunity.objects.get(start_date=p["date"])
+        for p in Parsed[:2]:
+            opp = VolunteerOpportunity.objects.get(event=p["event"], title=p["title"])
             self.assertEqual(opp.start_date, p["date"])
             self.assertEqual(opp.start_time, p["time"])
             self.assertEqual(opp.location, p["location"])
