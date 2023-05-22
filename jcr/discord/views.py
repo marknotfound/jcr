@@ -18,7 +18,7 @@ class VolunteerOpportunityWebhook(viewsets.ViewSet):
 
         if message:
             SUPRESS_EMBEDS = 1 << 2
-            requests.post(settings.NYRR_WEBHOOK, { "content": message, "flags": SUPRESS_EMBEDS })
+            requests.post(settings.PLUSONE_WEBHOOK, { "content": message, "flags": SUPRESS_EMBEDS })
 
         return response.Response(None, status=HTTPStatus.NO_CONTENT)
 
