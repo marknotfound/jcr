@@ -6,8 +6,8 @@ STATUS_EXCLUDE_LIST = ("Completed", "Partner Race",)
 class NYRRScraper(BaseScraper):
     root_url = NYRR_HOST
     paths = (
-        "/fullraceyearindex?year=2022",
         "/fullraceyearindex?year=2023",
+        "/fullraceyearindex?year=2024",
     )
 
     def scrape_full_dataset(self) -> dict:
